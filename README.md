@@ -56,6 +56,9 @@ Options are ordered by **Option Label**. Select to order by any other column.
 ### Order Descending
 Order is Ascending by default. Check to switch to **Descending**
 
+### Output
+If same as option_value will output chosen value (from under 'table columns'); set to 'value' (from under 'previously set') will output what option_label is set to (i.e., option_value & option_label beside Source Table in field settings) to prevent unchanged field change on page save (via hookable formatValue method).
+
 ---
 
 ## API 

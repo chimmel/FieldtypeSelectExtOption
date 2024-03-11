@@ -60,6 +60,7 @@
  * @since 2.1.1 - fixed bug: surround custom filter with brackets - 2022-01-27
  * @since 2.1.2 - extended function row() to retrieve any row by int value independend from a page value - 2022-08-30
  * @since 2.1.3 - fixed bug: Option list does not take into account 'Order by' and 'Order direction'. - 2024-02-12
+ * @since 2.1.31 - add formatValue method to output option_label value if option_output=value, to prevent unchanged field change on page save (override gh issue #16 in original repo) (bug not fixed; other values remain problematic) (by chimmel, forked)
  */
 
 class FieldtypeSelectExtOption extends FieldtypeMulti {
@@ -67,7 +68,7 @@ class FieldtypeSelectExtOption extends FieldtypeMulti {
 	public static function getModuleInfo() {
 		return array(
 			'title' => 'Select External Option',
-			'version' => 213,
+			'version' => 2131,
 			'summary' => __('Fieldtype which generates the options for a Select Inputfield from *any* table in *any* database hosted *anywhere*. Define database, source table, columns (to pull value & label) and the preferred Inputfieldtype in field settings.'),
 			'author' => 'kixe',
 			'href' => 'http://modules.processwire.com/modules/fieldtype-select-ext-option/',
@@ -718,6 +719,25 @@ class FieldtypeSelectExtOption extends FieldtypeMulti {
         }
         if (empty($result)) return null;
         return $result;
+	}
+		
+	/**
+	 * Format the given value for output and return a string of the formatted value
+	 * 
+	 * (Addresses kixe/FieldtypeSelectExtOption gh issue #16 by override)
+	 *
+	 * #pw-group-formatting
+	 * 
+	 * @param Page $page Page that the value lives on
+	 * @param Field $field Field that represents the value
+	 * @param string|int|object $value The value to format
+	 * @return mixed
+	 *
+	 */
+	public function ___formatValue(Page $page, Field $field, $value) {
+		if ($field->option_output == $field->option_value) return $value->{$field->option_value};
+		if ($field->option_output == 'value') return $value->{$field->option_label};
+		// other options result in field change false alarm on page save?
 	}
 	
 	/**
